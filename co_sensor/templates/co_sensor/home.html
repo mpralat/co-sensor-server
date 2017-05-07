@@ -1,32 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container block-center">
-    <div class="container">
-      <div class="row text-center">
-        <h2>CO Sensor</h1>
+  <div class="container">
+    <div class="row">
+      <h2>CO Sensor</h1>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="one-third column">
+        <h5>Django</h2>
+      </div>
+      <div class="one-third column">
+        <h5>Raspberry Pi</h2>
+      </div>
+      <div class="one-third column">
+        <h5>Arduino Uno</h2>
       </div>
     </div>
-    <div class="container">
-      <div class="row text-center">
-        <div class="one-third column">
-          <h5>Django</h2>
-        </div>
-        <div class="one-third column">
-          <h5>Raspberry Pi</h2>
-        </div>
-        <div class="one-third column">
-          <h5>Arduino Uno</h2>
-        </div>
-      </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <a class="button button-primary" href="{% url 'login' %}">Log In</a>
     </div>
-    <div class="container text-center">
-      <div class="row">
-        <button class="button button-primary">Log In</button>
-      </div>
-      <div class="row">
-        <button class="button">Sign In</button>
-      </div>
+    <div class="row">
+      <button class="button">Sign In</button>
     </div>
   </div>
 {% endblock %}
