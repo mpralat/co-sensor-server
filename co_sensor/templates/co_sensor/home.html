@@ -20,11 +20,11 @@
     </div>
   </div>
   <div class="container">
-    <div class="row">
-      <a class="button button-primary" href="{% url 'login' %}">Log In</a>
-    </div>
-    <div class="row">
-      <button class="button">Sign In</button>
+    <div class="row flex-row flex-center">
+      <div class="flex-column">
+        <a class="button button-primary" href="{% url 'login' %}">Log In</a>
+        <a class="button" href="">Sign Up</a>
+      </div>
     </div>
   </div>
 {% endblock %}
