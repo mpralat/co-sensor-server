@@ -8,5 +8,6 @@ urlpatterns = [
         TemplateView.as_view(template_name="co_sensor/home.html"),
         name='home'),
     url(r'^accounts/', include('accounts.urls')),
+    url(r'^sensors/', include('sensors.urls')),
     url(r'^admin/', admin.site.urls),
 ]
