@@ -6,7 +6,18 @@
 <h2>Login</h2>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="Log in"></input>
+  {% for error in form.non_field_errors %}
+      <p class="error"><strong>{{ error|escape }}</strong></p>
+  {% endfor %}
+  {% for field in form %}
+    <p>
+      {{ field.label_tag }}
+      {{ field }}
+      {% for error in field.errors %}
+        <p class="error">{{ error }}</p>
+      {% endfor %}
+    </p>
+  {% endfor %}
+  <input type="submit" value="Log In"></input>
 </form>
 {% endblock %}
