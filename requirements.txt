@@ -13,7 +13,6 @@ channels
 constantly
 incremental
 msgpack-python
-pkg-resources
 redis
 six
 Twisted
