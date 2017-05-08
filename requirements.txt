@@ -18,3 +18,4 @@ six
 Twisted
 txaio
 zope.interface
+txredisapi
