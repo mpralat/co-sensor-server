@@ -13,6 +13,25 @@
 </head>
 
 <body>
+  {% if user.is_authenticated %}
+  <div class="navbar-spacer"></div>
+  <nav class="navbar">
+    <div class="container">
+      <ul class="navbar-list">
+        <li class="navbar-item-left">
+          <a class="navbar-link" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="navbar-item-left">
+          <a class="navbar-link" href="">Data</a>
+        </li>
+        <li class="navbar-item-left">
+          <a class="navbar-link" href="">Sensors</a>
+        </li>
+      </ul>
+      <a class="navbar-item-right navbar-link" href="{% url 'logout' %}">Log Out</a>
+    </div>
+  </nav>
+  {% endif %}
   <div class="container block-center text-center">
     {% block content %}{% endblock %}
   </div>
