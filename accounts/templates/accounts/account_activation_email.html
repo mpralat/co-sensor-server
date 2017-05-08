@@ -1,7 +1,13 @@
-{% autoescape off %}
-Hi {{ user.username }},
+{% extends 'base.html' %}
 
-Please click on the link below to confirm your registration:
-
-http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
-{% endautoescape %}
+{% block content %}
+<p>
+  Hi {{ user.username }},
+</p>
+<p>
+  Please click on the link below to confirm your registration:
+</p>
+<p>
+  http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+</p>
+{% endblock %}
