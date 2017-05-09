@@ -1,6 +1,7 @@
 from channels import include
+from sensors.routing import channel_routing as sensors_routing
 
 
 channel_routing = [
-    include("sensors.routing.websocket_routing", path=r'^sensors/room'),
+    include(sensors_routing, path=r'^/sensors'),
 ]
