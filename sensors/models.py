@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from accounts.models import Profile
 
 
 class Room(models.Model):
@@ -26,3 +27,9 @@ class Message(models.Model):
             'message': self.message,
             'timestamp': self.formatted_timestamp
         }
+
+
+class Sensor(models.Model):
+    serial_number = models.UUIDField(primary_key=True, editable=False)
+    name = models.TextField()
+    owner = models.ForeignKey(Profile, related_name='sensors')

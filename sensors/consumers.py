@@ -1,32 +1,20 @@
 from channels import Group
+from channels.generic.websockets import JsonWebsocketConsumer
 from channels.sessions import channel_session
 from .models import Room
 import json
 
 
-@channel_session
-def ws_connect(message):
-    print("Connected!")
-    label = message['path'].strip('/').split('/')[-1]
-    print(label)
-    room = Room.objects.get(label=label)
-    Group('room-' + label).add(message.reply_channel)
-    message.channel_session['room'] = room.label
-    message.reply_channel.send({
-        'accept': True,
-    })
+class EchoConsumer(JsonWebsocketConsumer):
 
+    def connect(self, message, multiplexer, **kwargs):
+        print("I just connected!")
+        # Send data with the multiplexer
+        multiplexer.send({"status": "I just connected!"})
 
-@channel_session
-def ws_receive(message):
-    label = message.channel_session['room']
-    room = Room.objects.get(label=label)
-    data = json.loads(message['text'])
-    m = room.messages.create(handle=data['handle'], message=data['message'])
-    Group('room-'+label).send({'text': json.dumps(m.as_dict())})
+    def disconnect(self, message, multiplexer, **kwargs):
+        print("Stream %s is closed" % multiplexer.stream)
 
-
-@channel_session
-def ws_disconnect(message):
-    label = message.channel_session['room']
-    Group('room-'+label).discard(message.reply_channel)
+    def receive(self, content, multiplexer, **kwargs):
+        # Simple echo
+        multiplexer.send({"original_message": content})

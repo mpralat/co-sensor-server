@@ -1,13 +1,14 @@
-from channels import include
+from channels import include, route_class
+from channels.generic.websockets import WebsocketDemultiplexer
 from . import consumers
 
 
-room_routing = {
-    'websocket.connect': consumers.ws_connect,
-    'websocket.receive': consumers.ws_receive,
-    'websocket.disconnect': consumers.ws_disconnect,
-}
+class Demultiplexer(WebsocketDemultiplexer):
+    consumers = {
+        'sensor': consumers.EchoConsumer,
+    }
+
 
 channel_routing = [
-    include(room_routing, path=r'^/room'),
+    route_class(Demultiplexer, path=r'^/room'),
 ]
