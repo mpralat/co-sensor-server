@@ -62,3 +62,15 @@ class Sensor(models.Model):
             return "{name}, {owner}".format(name=self.name, owner=self.owner)
         else:
             return "#" + self.serial_number
+
+
+class SensorData(models.Model):
+    timestamp = models.DateTimeField(null=False)
+    value = models.DecimalField(max_digits=6, decimal_places=2, null=False)
+    sensor = models.ForeignKey(Sensor, related_name="data", null=False)
+
+    def __str__(self):
+        name = self.sensor.name
+        return "[{timestamp}] {name}: {value}".format(
+            timestamp=self.timestamp, name=name, value=self.value
+        )
