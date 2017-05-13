@@ -12,26 +12,32 @@ class SensorConsumer(JsonWebsocketConsumer):
         print(message['path'])
         serial_number = message['path'].split('/')[-1]
         print("I just connected!", serial_number)
-        if self.register(serial_number):
-            print("Registered!")
-        else:
-            multiplexer.send({"close": True})
+        if not self.sensor_exists(serial_number):
+            if not self.register_sensor(serial_number):
+                multiplexer.send({"close": True})
 
     def disconnect(self, message, multiplexer, **kwargs):
         print("Stream %s is closed" % multiplexer.stream)
 
     def receive(self, content, multiplexer, **kwargs):
-        action = content["action"]
-        if action == "register":
-            serial_number = content["serial"]
-            self.register(serial_number)
-            multiplexer.send({"message": "Registered"})
+        value = content["value"]
+        timestamp = content["timestamp"]
+        print("[{timestamp}] {value}".format(timestamp=timestamp, value=value))
 
-    def register(self, serial_number):
+    def sensor_exists(self, serial_number):
+        try:
+            Sensor.objects.get(serial_number=serial_number)
+        except ValidationError:
+            return False
+
+        return True
+
+    def register_sensor(self, serial_number):
         sensor = Sensor(serial_number=serial_number)
+
         try:
             sensor.full_clean()
-        except ValidationError as error:
+        except ValidationError:
             return False
 
         sensor.save()
