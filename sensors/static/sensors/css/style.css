@@ -1,0 +1,24 @@
+.block-center {
+  padding: 0;
+}
+
+.sensors-list {
+  padding-top: 5vh;
+  padding-bottom: 2vh;
+  border-bottom: 1px solid #eee;
+}
+
+.sensor-form {
+  padding-top: 2vh;
+}
+
+input.sensor-name,
+.sensor-form input {
+  text-align: center;
+  width: 15vw;
+  text-transform: none;
+}
+
+input.sensor-name {
+  font-size: 1em;
+}
