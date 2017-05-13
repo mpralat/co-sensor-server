@@ -1,7 +1,7 @@
 from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
 from channels.sessions import channel_session
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from .models import Sensor
 import json
 
@@ -27,7 +27,7 @@ class SensorConsumer(JsonWebsocketConsumer):
     def sensor_exists(self, serial_number):
         try:
             Sensor.objects.get(serial_number=serial_number)
-        except ValidationError:
+        except ObjectDoesNotExist:
             return False
 
         return True
