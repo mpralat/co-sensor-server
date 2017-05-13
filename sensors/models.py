@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from accounts.models import Profile
+from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 
 
 class Room(models.Model):
@@ -30,6 +31,34 @@ class Message(models.Model):
 
 
 class Sensor(models.Model):
-    serial_number = models.UUIDField(primary_key=True, editable=False)
-    name = models.TextField()
-    owner = models.ForeignKey(Profile, related_name='sensors')
+    SERIAL_LENGTH = 16
+    hex_validator = RegexValidator(
+        r'^[0-9A-F]{16}$',
+        "Only hex values are allowed"
+    )
+
+    serial_number = models.CharField(
+        primary_key=True,
+        max_length=SERIAL_LENGTH,
+        validators=[hex_validator],
+    )
+    name = models.TextField(max_length=20, null=True, blank=True)
+    owner = models.ForeignKey(
+        User,
+        related_name='sensors',
+        null=True,
+        blank=True
+    )
+
+    def save(self, *args, **kwargs):
+        self.serial_number = self.serial_number.upper()
+        difference = self.SERIAL_LENGTH - len(self.serial_number)
+        if difference > 0:
+            self.serial_number = '0' * difference + self.serial_number
+        super(Sensor, self).save(*args, **kwargs)
+
+    def __str__(self):
+        if self.owner is not None:
+            return "{name}, {owner}".format(name=self.name, owner=self.owner)
+        else:
+            return "#" + self.serial_number

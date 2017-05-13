@@ -5,7 +5,7 @@ from . import consumers
 
 class Demultiplexer(WebsocketDemultiplexer):
     consumers = {
-        'sensor': consumers.EchoConsumer,
+        'sensor': consumers.SensorConsumer,
     }
 
 

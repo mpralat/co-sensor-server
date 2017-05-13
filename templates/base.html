@@ -7,8 +7,8 @@
   <meta charset="utf-8">
   <title>CO Sensor {% block title %}{% endblock %}</title>
   <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
   <link rel="stylesheet" href="{% static "css/style.css" %}">
   {% block header %}{% endblock %}
 </head>
@@ -26,7 +26,7 @@
           <a class="navbar-link" href="">Data</a>
         </li>
         <li class="navbar-item-left">
-          <a class="navbar-link" href="">Sensors</a>
+          <a class="navbar-link" href="{% url 'sensors_list' %}">Sensors</a>
         </li>
       </ul>
       <a class="navbar-item-right navbar-link" href="{% url 'logout' %}">Log Out</a>

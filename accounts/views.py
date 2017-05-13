@@ -1,10 +1,12 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, View
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -83,3 +85,10 @@ class AccountActivateView(View):
         user.is_active = True
         user.profile.email_confirmed = True
         user.save()
+
+
+class OnlyAuthenticatedView(TemplateView):
+
+    @method_decorator(login_required(login_url="/"))
+    def dispatch(self, *args, **kwargs):
+        return super(TemplateView, self).dispatch(*args, **kwargs)

@@ -1,5 +1,8 @@
 from django.shortcuts import render
-from .models import Room, Message
+from django.views.generic import TemplateView
+from .models import Room, Message, Sensor
+from accounts.views import OnlyAuthenticatedView
+from accounts.models import Profile
 
 
 def chat_room(request, label):
@@ -14,3 +17,15 @@ def chat_room(request, label):
         'room': room,
         'messages': messages,
     })
+
+
+class SensorListView(OnlyAuthenticatedView):
+    template_name = "sensors/list.html"
+
+    def get(self, request, *args, **kwargs):
+        return super(SensorListView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SensorListView, self).get_context_data(**kwargs)
+        context["sensors"] = Sensor.objects.filter(owner=self.request.user)
+        return context

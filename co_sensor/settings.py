@@ -156,4 +156,3 @@ CHANNEL_LAYERS = {
         "ROUTING": "co_sensor.routing.channel_routing",
     },
 }
-print(CHANNEL_LAYERS["default"]["CONFIG"]["hosts"])

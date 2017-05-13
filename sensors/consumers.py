@@ -1,11 +1,11 @@
 from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
 from channels.sessions import channel_session
-from .models import Room
+from .models import Sensor
 import json
 
 
-class EchoConsumer(JsonWebsocketConsumer):
+class SensorConsumer(JsonWebsocketConsumer):
 
     def connect(self, message, multiplexer, **kwargs):
         print("I just connected!")
