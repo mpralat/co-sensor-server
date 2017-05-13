@@ -55,7 +55,7 @@ class Sensor(models.Model):
         difference = self.SERIAL_LENGTH - len(self.serial_number)
         if difference > 0:
             self.serial_number = '0' * difference + self.serial_number
-        super(Sensor, self).save(*args, **kwargs)
+        return super(Sensor, self).save(*args, **kwargs)
 
     def __str__(self):
         if self.owner is not None:

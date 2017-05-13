@@ -10,5 +10,5 @@ class Demultiplexer(WebsocketDemultiplexer):
 
 
 channel_routing = [
-    route_class(Demultiplexer, path=r'^/room'),
+    route_class(Demultiplexer, path=r'^/room/[0-9A-F]{16}'),
 ]

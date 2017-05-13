@@ -19,3 +19,4 @@ Twisted
 txaio
 zope.interface
 txredisapi
+django_extensions
