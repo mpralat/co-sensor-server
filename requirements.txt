@@ -20,3 +20,4 @@ txaio
 zope.interface
 txredisapi
 django_extensions
+django_widget_tweaks
