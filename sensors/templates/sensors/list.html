@@ -1,36 +1,48 @@
 {% extends "base.html" %}
 
-{% load static %}
+{% load static widget_tweaks %}
 
 {% block header %}
   <link rel="stylesheet" href="{% static "sensors/css/style.css" %}">
 {% endblock %}
 
 {% block content %}
-  <div class="container sensors-list">
-    <div class="row">
-      <h2>Your sensors</h2>
+  <div class="sensors">
+    <div class="container sensors-list">
+      <div class="row">
+        <h2>
+          {% if sensors %}
+            Your sensors
+          {% else %}
+            No sensors
+          {% endif %}
+        </h2>
+      </div>
+      {% for sensor in sensors %}
+        <div class="row">
+          <input class="sensor-name" type="button" value="{{ sensor.name }}" disabled/>
+        </div>
+      {% endfor %}
     </div>
-    {% for sensor in sensors %}
-      <div class="row">
-        <input class="sensor-name" type="button" value="{{ sensor.name }}" disabled/>
-      </div>
-    {% endfor %}
-  </div>
-  <div class="sensor-form">
-    <form class="" action="index.html" method="post">
-      <div class="row">
-        <h4>Add new sensor</h4>
-      </div>
-      <div class="row">
-        <input type="text" class="sensor-serial-input" placeholder="Enter serial number">
-      </div>
-      <div class="row">
-        <input type="text" class="sensor-name-input" placeholder="Enter sensor name">
-      </div>
-      <div class="row">
-        <input type="submit" class="button button-primary" value="Add">
-      </div>
-    </form>
+    <div class="sensor-form">
+      <form method="post">
+        {% for error in form.serial_number.errors %}
+          <p class="error"><strong>{{ error|escape }}</strong></p>
+        {% endfor %}
+        {% csrf_token %}
+        <div class="row">
+          <h4>Add new sensor</h4>
+        </div>
+        <div class="row">
+          {% render_field form.serial_number type="text" class="sensor-serial-input" placeholder="Enter serial number"%}
+        </div>
+        <div class="row">
+          {% render_field form.name type="text" class="sensor-name-input" placeholder="Enter sensor name" %}
+        </div>
+        <div class="row">
+          <input type="submit" class="button button-primary" value="Add">
+        </div>
+      </form>
+    </div>
   </div>
 {% endblock %}

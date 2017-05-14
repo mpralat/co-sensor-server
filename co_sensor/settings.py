@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'django_extensions',
+    'widget_tweaks',
     # Custom apps
     'co_sensor',
     'accounts',

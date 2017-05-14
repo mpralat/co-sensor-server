@@ -2,6 +2,13 @@
   padding: 0;
 }
 
+.sensors {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80vh;
+}
+
 .sensors-list {
   padding-top: 5vh;
   padding-bottom: 2vh;

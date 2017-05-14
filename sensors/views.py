@@ -1,6 +1,10 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import FormView
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Room, Message, Sensor
+from .forms import SensorForm
 from accounts.views import OnlyAuthenticatedView
 from accounts.models import Profile
 
@@ -22,10 +26,23 @@ def chat_room(request, label):
 class SensorListView(OnlyAuthenticatedView):
     template_name = "sensors/list.html"
 
-    def get(self, request, *args, **kwargs):
-        return super(SensorListView, self).get(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super(SensorListView, self).get_context_data(**kwargs)
-        context["sensors"] = Sensor.objects.filter(owner=self.request.user)
+        context['sensors'] = Sensor.objects.filter(owner=self.request.user)
+        form = SensorForm(self.request.POST or None)
+        context['form'] = form
         return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+
+        form: SensorForm = context['form']
+        if form.is_valid():
+            serial_number = form.cleaned_data['serial_number']
+            name = form.cleaned_data['name']
+            sensor = Sensor.objects.get(serial_number=serial_number)
+            sensor.name = name
+            sensor.owner = request.user
+            sensor.save()
+
+        return super().render_to_response(context)
