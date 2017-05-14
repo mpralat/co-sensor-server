@@ -40,8 +40,7 @@ class SensorConsumer(JsonWebsocketConsumer):
         data.save()
 
         Group('room-' + serial_number).send({
-            'timestamp': content["timestamp"],
-            'value': content["value"]
+            'text': "Echo!"
         })
 
     def sensor_exists(self, serial_number):
@@ -72,6 +71,8 @@ class ClientConsumer(JsonWebsocketConsumer):
         message.channel_session['serial_number'] = serial_number
         Group('room-' + serial_number).add(message.reply_channel)
 
+        self.message.reply_channel.send({"accept": True})
+
     def receive(self, content, **kwargs):
         serial_number = self.message.channel_session['serial_number']
         Group('room-' + serial_number).send({
@@ -81,3 +82,5 @@ class ClientConsumer(JsonWebsocketConsumer):
     def disconnect(self, message, **kwargs):
         serial_number = message.channel_session['serial_number']
         Group('room-' + serial_number).discard(message.reply_channel)
+
+        self.close()
