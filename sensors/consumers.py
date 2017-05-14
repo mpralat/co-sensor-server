@@ -1,3 +1,4 @@
+from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from .models import Sensor, SensorData
@@ -12,8 +13,8 @@ class SensorConsumer(JsonWebsocketConsumer):
         serial_number = message['path'].split('/')[-2]
         message.channel_session['serial_number'] = serial_number
 
-        if not self.sensor_exists(serial_number):
-            if not self.register_sensor(serial_number):
+        if not self.sensor_exists():
+            if not self.register_sensor():
                 self.close()
 
         super().connect(message, **kwargs)
@@ -40,27 +41,62 @@ class SensorConsumer(JsonWebsocketConsumer):
             }
         })
 
-    @classmethod
-    def sensor_exists(cls, serial_number):
+    def sensor_exists(self):
+        serial_number = self.message.channel_session['serial_number']
+
         try:
             Sensor.objects.get(serial_number=serial_number)
         except ObjectDoesNotExist:
             return False
+        else:
+            return True
 
-        return True
+    def register_sensor(self):
+        serial_number = self.message.channel_session['serial_number']
 
-    @classmethod
-    def register_sensor(cls, serial_number):
         sensor = Sensor(serial_number=serial_number)
 
         try:
             sensor.full_clean()
         except ValidationError:
             return False
-
-        sensor.save()
-        return True
+        else:
+            sensor.save()
+            return True
 
 
 class ClientConsumer(JsonWebsocketConsumer):
     channel_session_user = True
+    http_user = True
+
+    def connect(self, message, **kwargs):
+        serial_number = message['path'].split('/')[-2]
+        message.channel_session['serial_number'] = serial_number
+
+        if not self.user_is_sensor_owner():
+            self.close()
+
+        group = Group('room-' + serial_number)
+        reply_channel = self.message.reply_channel
+        print("Client:", reply_channel)
+        group.add(self.message.reply_channel)
+
+        super().connect(message, **kwargs)
+
+    def disconnect(self, message, **kwargs):
+        serial_number = self.message.channel_session['serial_number']
+        group = Group('room-' + serial_number)
+        group.discard(self.message.reply_channel)
+
+        super().disconnect(message, **kwargs)
+
+    def user_is_sensor_owner(self):
+        serial_number = self.message.channel_session['serial_number']
+        user = self.message.user
+
+        try:
+            Sensor.objects.filter(serial_number=serial_number, owner=user)
+        except ObjectDoesNotExist:
+            return False
+        else:
+            return True
