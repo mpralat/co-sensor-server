@@ -20,7 +20,9 @@
       </div>
       {% for sensor in sensors %}
         <div class="row">
-          <input href="{% url 'room' sensor.serial_number %}" class="sensor-name" type="button" value="{{ sensor.name }}" disabled/>
+          <a href="{% url 'room' sensor.serial_number %}" class="sensor-link">
+            {{ sensor.name }}
+          </a>
         </div>
       {% endfor %}
     </div>
