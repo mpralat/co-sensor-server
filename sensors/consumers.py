@@ -1,28 +1,24 @@
-from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
-from channels.sessions import channel_session
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from .models import Sensor, SensorData
-import json
 from decimal import *
 from datetime import datetime
 
 
 class SensorConsumer(JsonWebsocketConsumer):
-    channel_session_user = True
+    channel_session = True
 
-    def connect(self, message, multiplexer, **kwargs):
-        serial_number = message['path'].split('/')[-1]
+    def connect(self, message, **kwargs):
+        serial_number = message['path'].split('/')[-2]
         message.channel_session['serial_number'] = serial_number
 
         if not self.sensor_exists(serial_number):
             if not self.register_sensor(serial_number):
-                multiplexer.send({"close": True})
+                self.close()
 
-    def disconnect(self, message, multiplexer, **kwargs):
-        print("Stream %s is closed" % multiplexer.stream)
+        super().connect(message, **kwargs)
 
-    def receive(self, content, multiplexer, **kwargs):
+    def receive(self, content, **kwargs):
         timestamp = content["timestamp"]
         timestamp = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f%z')
         value = Decimal(content["value"]).quantize(Decimal('.01'))
@@ -37,7 +33,15 @@ class SensorConsumer(JsonWebsocketConsumer):
             return
         data.save()
 
-    def sensor_exists(self, serial_number):
+        self.group_send('room-' + serial_number, {
+            'text': {
+                'timestamp': content['timestamp'],
+                'value': content['value']
+            }
+        })
+
+    @classmethod
+    def sensor_exists(cls, serial_number):
         try:
             Sensor.objects.get(serial_number=serial_number)
         except ObjectDoesNotExist:
@@ -45,7 +49,8 @@ class SensorConsumer(JsonWebsocketConsumer):
 
         return True
 
-    def register_sensor(self, serial_number):
+    @classmethod
+    def register_sensor(cls, serial_number):
         sensor = Sensor(serial_number=serial_number)
 
         try:
@@ -55,3 +60,7 @@ class SensorConsumer(JsonWebsocketConsumer):
 
         sensor.save()
         return True
+
+
+class ClientConsumer(JsonWebsocketConsumer):
+    channel_session_user = True
