@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'channels',
     'django_extensions',
     'widget_tweaks',
+    'rest_framework',
     # Custom apps
     'co_sensor',
     'accounts',

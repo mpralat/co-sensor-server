@@ -3,25 +3,12 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 var chart = null;
-
-function addValue(chart, timestamp, value){
-    var data = chart.data.datasets[0].data;
-
-    if (data.length > 20) {
-        data.shift();
-    }
-
-    data.push({
-        'x': timestamp,
-        'y': value
-    });
-    chart.update();
-}
+var socket = null;
 
 function main() {
     chart = createChart();
 
-    createSocket();
+    socket = createSocket();
 }
 
 function createChart() {
@@ -66,6 +53,20 @@ function createChart() {
     });
 }
 
+function addValue(chart, timestamp, value){
+    var data = chart.data.datasets[0].data;
+
+    if (data.length > 20) {
+        data.shift();
+    }
+
+    data.push({
+        'x': timestamp,
+        'y': value
+    });
+    chart.update();
+}
+
 function createSocket() {
     var protocol;
     if (window.location.protocol == 'https:'){
@@ -85,17 +86,28 @@ function createSocket() {
     url += '/sensors/room/' + serialNumber + '/client';
 
     var socket = new WebSocket(url);
-    socket.onmessage = consumeMessage;
+
+    socket.consumeMessage = consumeData;
+    socket.onmessage = parseMessage;
+
+    return socket;
 }
 
-function consumeMessage(message) {
-    console.log(message.data);
+function parseMessage(message) {
     var data = JSON.parse(message.data);
-    console.log(data);
-    var frame = data['text'];
-    var value = parseFloat(frame['value']);
-    var timestamp = new Date(Date.parse(frame['timestamp']));
-    console.log(timestamp);
-    console.log(value);
-    addValue(chart, timestamp, value);
+    socket.consumeMessage(data);
+}
+
+function consumeData(data) {
+    var frames = data;
+    if (!(frames instanceof Array)) {
+        frames = [frames];
+    }
+    frames.forEach(function(frame){
+        var value = parseFloat(frame['value']);
+        var timestamp = new Date(Date.parse(frame['timestamp']));
+        console.log(timestamp);
+        console.log(value);
+        addValue(chart, timestamp, value);
+    });
 }

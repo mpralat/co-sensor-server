@@ -1,8 +1,9 @@
 from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.core.serializers import serialize
+from rest_framework.renderers import JSONRenderer
 from .models import Sensor, SensorData
+from .serializers import SensorDataSerializer
 from decimal import *
 from datetime import datetime
 
@@ -39,9 +40,7 @@ class SensorConsumer(JsonWebsocketConsumer):
             'timestamp': content['timestamp'],
             'value': content['value']
         }
-        self.group_send('room-' + serial_number, {
-            'text': frame
-        })
+        self.group_send('room-' + serial_number, frame)
 
     def sensor_exists(self):
         serial_number = self.message.channel_session['serial_number']
@@ -83,10 +82,13 @@ class ClientConsumer(JsonWebsocketConsumer):
 
         super().connect(message, **kwargs)
 
-    def receive(self, content, **kwargs):
-        if "initial_data" in content:
-            sensor = Sensor.objects.get(serial_number=self.message.channel_session['serial_number'])
-            initial_data = SensorData.objects.filter(sensor=sensor).order_by('timestamp')[:20]
+        sensor = Sensor.objects.get(serial_number=self.message.channel_session['serial_number'])
+        initial_data = SensorData.objects.filter(sensor=sensor).order_by('timestamp')[20:]
+        serializer = SensorDataSerializer(initial_data, many=True)
+        frame = JSONRenderer().render(serializer.data).decode()
+        message.reply_channel.send({
+            'text': frame
+        })
 
     def disconnect(self, message, **kwargs):
         serial_number = self.message.channel_session['serial_number']
