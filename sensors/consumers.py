@@ -1,6 +1,7 @@
 from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.serializers import serialize
 from .models import Sensor, SensorData
 from decimal import *
 from datetime import datetime
@@ -82,6 +83,11 @@ class ClientConsumer(JsonWebsocketConsumer):
         group.add(self.message.reply_channel)
 
         super().connect(message, **kwargs)
+
+    def receive(self, content, **kwargs):
+        if "initial_data" in content:
+            sensor = Sensor.objects.get(serial_number=self.message.channel_session['serial_number'])
+            initial_data = SensorData.objects.filter(sensor=sensor).order_by('timestamp')[:20]
 
     def disconnect(self, message, **kwargs):
         serial_number = self.message.channel_session['serial_number']
