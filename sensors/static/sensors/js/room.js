@@ -73,11 +73,18 @@ function createSocket() {
     } else {
         protocol = 'ws:'
     }
+
     var port = '';
     if (window.location.port != ''){
         port = ':' + window.location.port;
     }
-    var socket = new WebSocket(protocol + '//' + window.location.hostname + port + '/sensors/room/E8A44117E02E4147/client');
+
+    var serialNumber = window.location.pathname.split('/')[3];
+
+    var url = protocol + '//' + window.location.hostname + port;
+    url += '/sensors/room/' + serialNumber + '/client';
+
+    var socket = new WebSocket(url);
     socket.onmessage = consumeMessage;
 }
 
