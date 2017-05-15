@@ -1,65 +1,84 @@
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function() {
   main();
 });
 
-var myLineChart;
+var chart = null;
 
-function addData(){
-    myLineChart.data.datasets[0].data.shift();
-    myLineChart.data.datasets[0].data.push(40 + Math.random() * 40);
-    myLineChart.data.labels.shift();
-    myLineChart.data.labels.push("Newly Added");
-    myLineChart.update();
+function addValue(chart, timestamp, value){
+    var data = chart.data.datasets[0].data;
+
+    if (data.length > 20) {
+        data.shift();
+    }
+
+    data.push({
+        'x': timestamp,
+        'y': value
+    });
+    chart.update();
 }
 
 function main() {
+    chart = createChart();
+
+    createSocket();
+}
+
+function createChart() {
     var canvas = document.getElementById('chart');
 
-    var dataset = [];
-    var x = 0;
-    var y = 250;
-
-    while (x < 180) {
-        dataset.push({x: x, y: y});
-        x += 1 + Math.random() * 0.2;
-        y += Math.random() * 2 - 1;
-    }
+    var datasets = [{
+        label: 'CO ppm',
+        data: [],
+        strokeColor: "rgba(51, 195, 240, 0.9)",
+        fillColor: "rgba(51, 195, 240, 0.9)"
+    }];
 
     var data = {
-        datasets: [
-            {
-                label: "CO ppm",
-                data: dataset
-            }
-        ]
+        datasets: datasets
     };
-
-    console.log(data);
 
     var options = {
-        type: 'linear',
-        position: 'bottom'
+        responsive: true,
+        scales: {
+            xAxes: [{
+                type: "time",
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Date'
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'value'
+                }
+            }]
+        }
     };
 
-    console.log(options);
-
-    myLineChart = Chart.Line(canvas,{
+    return Chart.Line(canvas,{
         type: 'line',
-        data: {
-            datasets: [{
-                label: 'CO ppm',
-                data: dataset,
-                strokeColor: "rgba(51, 195, 240, 0.9)",
-                fillColor: "rgba(51, 195, 240, 0.9)"
-            }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    type: 'linear',
-                    position: 'bottom'
-                }]
-            }
-        }
+        data: data,
+        options: options
     });
+}
+
+function createSocket() {
+    var socket = new WebSocket("ws://localhost:5000/sensors/room/E8A44117E02E4147/client");
+    socket.onmessage = consumeMessage;
+}
+
+function consumeMessage(message) {
+    console.log(message.data);
+    var data = JSON.parse(message.data);
+    console.log(data);
+    var frame = data['text'];
+    var value = parseFloat(frame['value']);
+    var timestamp = new Date(Date.parse(frame['timestamp']));
+    console.log(timestamp);
+    console.log(value);
+    addValue(chart, timestamp, value);
 }
