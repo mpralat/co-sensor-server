@@ -67,7 +67,17 @@ function createChart() {
 }
 
 function createSocket() {
-    var socket = new WebSocket("ws://localhost:5000/sensors/room/E8A44117E02E4147/client");
+    var protocol;
+    if (window.location.protocol == 'https:'){
+        protocol = 'wss:';
+    } else {
+        protocol = 'ws:'
+    }
+    var port = '';
+    if (window.location.port != ''){
+        port = ':' + window.location.port;
+    }
+    var socket = new WebSocket(protocol + '//' + window.location.hostname + port + '/sensors/room/E8A44117E02E4147/client');
     socket.onmessage = consumeMessage;
 }
 
