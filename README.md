@@ -1,4 +1,4 @@
-# CO Sensor [Raspberry Pi] + [Django Channels] Project
+# CO Sensor [Raspberry Pi] + [Django Channels] Project - Server
 
 
 # Getting started
@@ -7,6 +7,8 @@
 
 #### Create virtual environment
 `python -m venv ../server-env`
+#### Activate virtual environemtn
+`source ../server-env/bin/activate`
 #### Install required python modules
 `pip install -r requirements.txt`
 
