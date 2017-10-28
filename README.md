@@ -7,7 +7,7 @@
 
 #### Create virtual environment
 `python -m venv ../server-env`
-#### Activate virtual environemtn
+#### Activate virtual environment
 `source ../server-env/bin/activate`
 #### Install required python modules
 `pip install -r requirements.txt`
