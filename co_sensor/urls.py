@@ -9,5 +9,6 @@ urlpatterns = [
         name='home'),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^sensors/', include('sensors.urls')),
+    url(r'^map/', include('map.urls')),
     url(r'^admin/', admin.site.urls),
 ]

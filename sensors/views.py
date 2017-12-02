@@ -23,8 +23,10 @@ def chat_room(request, label):
         'messages': messages,
     })
 
+
 def statistics(request, label):
     return HttpResponse("Statistics for {}".format(label))
+
 
 class SensorListView(OnlyAuthenticatedView):
     template_name = "sensors/list.html"
