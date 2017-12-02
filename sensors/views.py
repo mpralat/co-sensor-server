@@ -8,6 +8,8 @@ from accounts.models import Profile
 from accounts.views import OnlyAuthenticatedView
 from .forms import SensorForm
 from .models import Room, Message, Sensor
+from map.forms import AddressForm
+from map.models import Address
 
 
 def chat_room(request, label):
@@ -36,18 +38,29 @@ class SensorListView(OnlyAuthenticatedView):
         context['sensors'] = Sensor.objects.filter(owner=self.request.user)
         form = SensorForm(self.request.POST or None)
         context['form'] = form
+        address_form = AddressForm(self.request.POST or None)
+        context['address_form'] = address_form
         return context
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
 
         form: SensorForm = context['form']
+        address_form: AddressForm = context['address_form']
         if form.is_valid():
             serial_number = form.cleaned_data['serial_number']
             name = form.cleaned_data['name']
             sensor = Sensor.objects.get(serial_number=serial_number)
             sensor.name = name
             sensor.owner = request.user
+            if address_form.is_valid():
+                country = address_form.cleaned_data['country']
+                city = address_form.cleaned_data['city']
+                street = address_form.cleaned_data['street']
+                house_no = address_form.cleaned_data['house_no']
+                address = Address(country=country, city=city, street=street, house_no=house_no)
+                address.save()
+                sensor.address = address
             sensor.save()
 
         return super().render_to_response(context)

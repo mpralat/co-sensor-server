@@ -41,6 +41,22 @@
         <div class="row">
           {% render_field form.name type="text" class="sensor-name-input" placeholder="Enter sensor name" %}
         </div>
+
+        <div class="row">
+          <h5>Sensor's address</h5>
+        </div>
+        <div class="row">
+          {% render_field address_form.country type="text" class="sensor-name-input" placeholder="Enter country" %}
+        </div>
+        <div class="row">
+          {% render_field address_form.city type="text" class="sensor-name-input" placeholder="Enter city" %}
+        </div>
+        <div class="row">
+          {% render_field address_form.street type="text" class="sensor-name-input" placeholder="Enter street" %}
+        </div>
+        <div class="row">
+          {% render_field address_form.house_no type="text" class="sensor-name-input" placeholder="Enter house number" %}
+        </div>
         <div class="row">
           <input type="submit" class="button button-primary" value="Add">
         </div>

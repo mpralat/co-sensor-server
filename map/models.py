@@ -1,11 +1,20 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
+def validate_nonzero(value):
+    if value == 0:
+        raise ValidationError(
+            _('House Number %(value)s is not allowed'),
+            params={'value': value},
+        )
+
+
 class Address(models.Model):
-    country = models.TextField(max_length=20, null=True, blank=False)
-    city = models.TextField(max_length=20, null=True, blank=False)
-    street = models.TextField(max_length=20, null=True, blank=False)
-    house_no = models.IntegerField(null=True, blank=False)
+    country = models.CharField(max_length=20, null=True, blank=False)
+    city = models.CharField(max_length=20, null=True, blank=False)
+    street = models.CharField(max_length=20, null=True, blank=False)
+    house_no = models.PositiveIntegerField(null=True, blank=False, validators=[validate_nonzero])
 
     def __str__(self):
         return "{city}, {street}".format(city=self.city, street=self.street)
