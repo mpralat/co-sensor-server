@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'co_sensor',
     'accounts',
     'sensors',
-    'map'
+    'map',
+    'stats'
 ]
 
 MIDDLEWARE = [

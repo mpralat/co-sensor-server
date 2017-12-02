@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static "stats/css/style.css" %}">
+    <script type="text/javascript">
+      var variable = '{{ sensors | escapejs }}';
+    </script>
+    <script src="{% static 'stats/js/socket_data.js' %}"></script>
+{% endblock %}

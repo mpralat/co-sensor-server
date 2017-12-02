@@ -1,0 +1,15 @@
+.dangerous {
+    color: #ff2f2f;
+}
+
+.medium {
+    color: #ffa22f
+}
+
+.normal {
+    color: #ffe12f
+}
+
+.healthy {
+    color: #2ae5c4
+}
