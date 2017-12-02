@@ -1,12 +1,13 @@
-from django.shortcuts import render
-from django.views.generic import FormView
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Room, Message, Sensor
-from .forms import SensorForm
-from accounts.views import OnlyAuthenticatedView
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
+from django.urls import reverse
+from django.views.generic import FormView
+
 from accounts.models import Profile
+from accounts.views import OnlyAuthenticatedView
+from .forms import SensorForm
+from .models import Room, Message, Sensor
 
 
 def chat_room(request, label):
@@ -22,6 +23,8 @@ def chat_room(request, label):
         'messages': messages,
     })
 
+def statistics(request, label):
+    return HttpResponse("Statistics for {}".format(label))
 
 class SensorListView(OnlyAuthenticatedView):
     template_name = "sensors/list.html"

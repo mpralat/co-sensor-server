@@ -22,9 +22,14 @@
         <li class="navbar-item-left">
           <a class="navbar-link" href="{% url 'home' %}">Home</a>
         </li>
-        <li class="navbar-item-left">
-          <a class="navbar-link" href="">Data</a>
-        </li>
+          {% if room %}
+              <li class="navbar-item-left">
+                <a class="navbar-link" href="{% url 'room' room.label %}" >Data</a>
+              </li>
+              <li class="navbar-item-left">
+                <a class="navbar-link" href="{% url 'statistics' room.label %}">Statistics</a>
+              </li>
+          {% endif %}
         <li class="navbar-item-left">
           <a class="navbar-link" href="{% url 'sensors_list' %}">Sensors</a>
         </li>
