@@ -6,6 +6,7 @@ from django.views.generic import FormView, DeleteView
 
 from accounts.models import Profile
 from accounts.views import OnlyAuthenticatedView
+from map.geo_resolver import GeoResolver
 from .forms import SensorForm
 from .models import Room, Message, Sensor
 from map.forms import AddressForm
@@ -58,10 +59,14 @@ class SensorListView(OnlyAuthenticatedView):
                 city = address_form.cleaned_data['city']
                 street = address_form.cleaned_data['street']
                 house_no = address_form.cleaned_data['house_no']
-                address = Address(country=country, city=city, street=street, house_no=house_no)
-                address.save()
-                sensor.address = address
-            sensor.save()
+                resolver = GeoResolver()
+                coords = resolver.get_coordinates(country=country, city=city, street=street, house_no=house_no)
+                if coords:
+                    address = Address(longitude=coords.get('lng'), latitude=coords.get('lat'))
+                    address.save()
+                    sensor.address = address
+                sensor.save()
+
 
         return super().render_to_response(context)
 
@@ -74,5 +79,7 @@ def sensor_delete(request, *args, **kwargs):
         sensor = Sensor.objects.filter(serial_number=sensor_pk).first()
         if sensor is not None:
             sensor.owner = None
+            sensor.name = None
+            Address.objects.get(id=sensor.address.id).delete()
             sensor.save()
         return redirect('sensors_list')

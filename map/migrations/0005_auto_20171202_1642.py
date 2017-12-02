@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='address',
             name='house_no',
-            field=models.PositiveIntegerField(blank=True, null=True, validators=[map.models.validate_nonzero]),
+            field=models.PositiveIntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
             model_name='address',

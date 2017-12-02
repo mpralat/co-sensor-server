@@ -46,6 +46,9 @@
         <div class="row">
           <h5>Sensor's address</h5>
         </div>
+         {% for error in address_form.country.errors %}
+          <p class="error"><strong>{{ error|escape }}</strong></p>
+         {% endfor %}
         <div class="row">
           {% render_field address_form.country type="text" class="sensor-name-input" placeholder="Enter country" %}
         </div>
