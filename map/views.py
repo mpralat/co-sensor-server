@@ -3,5 +3,5 @@ from django.shortcuts import render
 
 
 def show_map(request):
-    return HttpResponse("Show map")
+    return render(request, 'map.html')
 
