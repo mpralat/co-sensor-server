@@ -26,15 +26,15 @@
               <li class="navbar-item-left">
                 <a class="navbar-link" href="{% url 'room' room.label %}" >Data</a>
               </li>
-              <li class="navbar-item-left">
-                <a class="navbar-link" href="{% url 'statistics' %}">Statistics</a>
-              </li>
           {% endif %}
         <li class="navbar-item-left">
           <a class="navbar-link" href="{% url 'sensors_list' %}">Sensors</a>
         </li>
         <li class="navbar-item-left">
           <a class="navbar-link" href="{% url 'map' %}">Map</a>
+        </li>
+        <li class="navbar-item-left">
+            <a class="navbar-link" href="{% url 'statistics' %}">Statistics</a>
         </li>
       </ul>
       <a class="navbar-item-right navbar-link" href="{% url 'logout' %}">Log Out</a>

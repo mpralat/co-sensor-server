@@ -10,7 +10,7 @@ function main() {
     socket = createSocket();
 }
 
-function createSockets() {
+function createSocket() {
     var protocol;
     if (window.location.protocol == 'https:'){
         protocol = 'wss:';
