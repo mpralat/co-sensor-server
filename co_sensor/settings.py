@@ -160,3 +160,5 @@ CHANNEL_LAYERS = {
         "ROUTING": "co_sensor.routing.channel_routing",
     },
 }
+
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')

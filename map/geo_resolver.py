@@ -1,10 +1,10 @@
 import googlemaps
-import os
+from django.conf import settings
 
 
 class GeoResolver:
     def __init__(self):
-        self.api_key = os.environ['GOOGLE_MAPS_API_KEY']
+        self.api_key = settings.GOOGLE_MAPS_API_KEY
 
     def get_coordinates(self, country, city, street, house_no):
         search_string = ','.join((country, city, '{} {}'.format(street, house_no)))
