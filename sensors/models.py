@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from map.models import Address
 
 
 class Room(models.Model):
@@ -36,7 +37,6 @@ class Sensor(models.Model):
         r'^[0-9A-F]{16}$',
         "Only hex values are allowed"
     )
-
     serial_number = models.CharField(
         primary_key=True,
         max_length=SERIAL_LENGTH,
@@ -49,6 +49,7 @@ class Sensor(models.Model):
         null=True,
         blank=True
     )
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True, related_name="sensors")
 
     def save(self, *args, **kwargs):
         self.serial_number = self.serial_number.upper()
