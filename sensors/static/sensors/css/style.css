@@ -1,3 +1,8 @@
+:root {
+  --attention_colour: #990000;
+  --main_font_colour: #555;
+}
+
 .block-center {
   padding: 0;
 }
@@ -36,7 +41,7 @@ input.sensor-name {
   display: inline-block;
   height: 38px;
   padding: 0 30px;
-  color: #555;
+  color: var(--main_font_colour);
   font-weight: 600;
   line-height: 38px;
   letter-spacing: .1rem;
@@ -49,4 +54,9 @@ input.sensor-name {
   box-sizing: border-box;
   margin-bottom: 1.5rem;
   font-family: Sans-Serif;
+}
+
+.delete {
+  background-color: var(--attention_colour);
+  color: white;
 }
