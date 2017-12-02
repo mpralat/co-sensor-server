@@ -23,6 +23,7 @@
           <a href="{% url 'room' sensor.serial_number %}" class="sensor-link">
             {{ sensor.name }}
           </a>
+          <a href="{% url 'sensor_delete' sensor.serial_number %}">Delete</a>
         </div>
       {% endfor %}
     </div>

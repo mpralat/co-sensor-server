@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load static widget_tweaks %}
+
+{% block header %}
+  <link rel="stylesheet" href="{% static "sensors/css/style.css" %}">
+{% endblock %}
+
+{% block content %}
+  <div class="sensors">
+    <div class="sensor-form">
+        <form action="" method="post">{% csrf_token %}
+            <p>Are you sure you want to delete "{{ sensor_pk }}"?</p>
+            <input type="submit" value="Confirm" />
+        </form>
+    </div>
+  </div>
+{% endblock %}

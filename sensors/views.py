@@ -1,8 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import FormView
+from django.views.generic import FormView, DeleteView
 
 from accounts.models import Profile
 from accounts.views import OnlyAuthenticatedView
@@ -64,3 +64,15 @@ class SensorListView(OnlyAuthenticatedView):
             sensor.save()
 
         return super().render_to_response(context)
+
+
+def sensor_delete(request, *args, **kwargs):
+    sensor_pk = kwargs["pk"]
+    if request.method == 'GET':
+        return render(request, 'sensors/sensor_delete.html', {"sensor_pk": sensor_pk})
+    else:
+        sensor = Sensor.objects.filter(serial_number=sensor_pk).first()
+        if sensor is not None:
+            sensor.owner = None
+            sensor.save()
+        return redirect('sensors_list')
