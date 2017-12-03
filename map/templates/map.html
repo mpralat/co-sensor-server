@@ -4,10 +4,29 @@
 
 {% block header %}
   <link rel="stylesheet" href="{% static "sensors/css/style.css" %}">
+  <link rel="stylesheet" href="{% static "css/map.css" %}">
+{#  <script src="{% static 'js/map.js' %}"></script>#}
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
+
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{ google_key }}&callback=initMap">
+  </script>
 {% endblock %}
 
 {% block content %}
+  <h3>Map with Sensors</h3>
+  <div id="map"></div>
+
+  {% for sensor in sensors_list %}
+    <div>{{ sensor.name }}: lat= {{ sensor.address.latitude }}, lng= {{ sensor.address.longitude }}</div>
+  {% endfor %}
+
+  <script src="{% static 'js/map.js' %}">
+{#    {% for sensor in sensors_list %}#}
+{#      setMarkerOnMap({{ sensor.address.latitude }}, {{ sensor.address.longitude }}, '{{ sensor.name }}');#}
+{#    {% endfor %}#}
+
+  </script>
 
 {% endblock %}
