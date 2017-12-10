@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
-from stats.views import show_stats
+from stats.views import show_week_stats
 
 urlpatterns = [
-    url(r'^$', show_stats, name='statistics'),
+    url(r'^$', show_week_stats, name='statistics'),
 ]

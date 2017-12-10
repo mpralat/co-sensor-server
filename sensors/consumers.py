@@ -72,6 +72,7 @@ class ClientConsumer(JsonWebsocketConsumer):
 
     def connect(self, message, **kwargs):
         serial_number = message['path'].split('/')[-2]
+
         message.channel_session['serial_number'] = serial_number
 
         if not self.user_is_sensor_owner():
@@ -82,13 +83,15 @@ class ClientConsumer(JsonWebsocketConsumer):
 
         super().connect(message, **kwargs)
 
-        sensor = Sensor.objects.get(serial_number=self.message.channel_session['serial_number'])
-        initial_data = SensorData.objects.filter(sensor=sensor).order_by('timestamp')[20:]
-        serializer = SensorDataSerializer(initial_data, many=True)
-        frame = JSONRenderer().render(serializer.data).decode()
-        message.reply_channel.send({
-            'text': frame
-        })
+        if 'client' in message['path']:
+            sensor = Sensor.objects.get(serial_number=self.message.channel_session['serial_number'])
+            initial_data = SensorData.objects.filter(sensor=sensor).order_by('timestamp')[20:]
+            serializer = SensorDataSerializer(initial_data, many=True)
+            frame = JSONRenderer().render(serializer.data).decode()
+
+            message.reply_channel.send({
+                'text': frame
+            })
 
     def disconnect(self, message, **kwargs):
         serial_number = self.message.channel_session['serial_number']

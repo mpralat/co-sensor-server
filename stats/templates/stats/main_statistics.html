@@ -1,10 +1,23 @@
 {% extends "base.html" %}
-{% load static %}
+
+{% load static widget_tweaks %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static "stats/css/style.css" %}">
+    <link rel="stylesheet" href="{% static "sensors/css/style.css" %}">
     <script type="text/javascript">
-      var variable = '{{ sensors | escapejs }}';
+    averages = {{ averages }};
+    sensors_nums = {{ sensor_labels | safe }};
+    counts = {{ counts }};
     </script>
-    <script src="{% static 'stats/js/socket_data.js' %}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.js"></script>
+    <script src="{%  static 'stats/js/avg_chart.js' %}"></script>
+    <script src="{% static 'stats/js/stats.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <canvas id="chart" width="400" height="300"></canvas>
+    {% for sensor in sensor_labels %}
+        <div id={{ sensor }}></div>
+    {% endfor %}
 {% endblock %}
