@@ -1,5 +1,7 @@
 
 // https://developers.google.com/maps/documentation/javascript/markers
+// https://www.patrick-wied.at/static/heatmapjs/
+// https://www.patrick-wied.at/static/heatmapjs/example-heatmap-googlemaps.html
 
 document.addEventListener("DOMContentLoaded", function() {
     main();
