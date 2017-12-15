@@ -10,8 +10,10 @@ function main() {
     sockets = createSockets();
 }
 
-function createSockets(consumeData, parseMessage) {
+
+function createSockets() {
     var protocol;
+    var sufix = 'stats';
     if (window.location.protocol == 'https:'){
         protocol = 'wss:';
     } else {
@@ -25,7 +27,7 @@ function createSockets(consumeData, parseMessage) {
 
     for (i = 0; i < sensors_nums.length; i++) {
         num = sensors_nums[i];
-        socket = createSingleSocket(num, protocol, port);
+        socket = createSingleSocket(num, protocol, port, sufix);
         socket.consumeMessage = consumeData;
         socket.onmessage = parseMessage;
         sockets.push(socket);
@@ -33,21 +35,21 @@ function createSockets(consumeData, parseMessage) {
     return sockets;
 }
 
-function createSingleSocket(serialNumber, protocol, port) {
+function createSingleSocket(serialNumber, protocol, port, sufix) {
     var url = protocol + '//' + window.location.hostname + port;
-    url += '/sensors/room/' + serialNumber + '/stats';
+    url += '/sensors/room/' + serialNumber + '/' + sufix;
 
-    console.log(url);
     return new WebSocket(url);
 }
-
 function parseMessage(message) {
     var data = JSON.parse(message.data);
-    var serial_num = message.target.url.split('/');
-    socket.consumeMessage(data, serial_num[serial_num.length - 2]);
+    var parsed_url = message.target.url.split('/');
+    var serial_num = parsed_url[parsed_url.length - 2];
+    socket.consumeMessage(data, serial_num);
 }
 
 function consumeData(data, serial_num) {
+    console.log(serial_num);
     var frames = data;
     if (!(frames instanceof Array)) {
         frames = [frames];
@@ -56,10 +58,10 @@ function consumeData(data, serial_num) {
         var value = parseFloat(frame['value']);
         var timestamp = new Date(Date.parse(frame['timestamp']));
         addAvgValue(avg_chart, timestamp, value);
-        refreshCurrentValue(value, serial_num);
+        // refreshCurrentValue(value, serial_num);
     });
 }
 
 function refreshCurrentValue(value, serial_num) {
-
+    console.log(value, serial_num)
 }

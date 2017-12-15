@@ -31,13 +31,10 @@ function getWeekDayNumber(timestamp) {
 }
 
 function addAvgValue(chart, timestamp, value){
-    console.log('AVG UPDATE!! ');
     index = getWeekDayNumber(timestamp);
-    console.log(index);
+    index = getWeekDayNumber(timestamp);
     counts[index] += 1;
-    console.log(counts);
     averages[index] = (averages[index] * counts[index] + value) / counts[index];
-    console.log(averages);
     chart.data.datasets[0].data = averages;
     chart.update();
 }
