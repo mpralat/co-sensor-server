@@ -5,9 +5,13 @@
 {% block header %}
   <link rel="stylesheet" href="{% static "sensors/css/style.css" %}">
   <link rel="stylesheet" href="{% static "css/map.css" %}">
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+  <script>
+    var sensors_list = {{ sensors_list|safe }};
+  </script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ google_key }}"></script>
   <script type="text/javascript" src="{% static 'js/heatmap.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/gmaps-heatmap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/map.js' %}"></script>
 
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
@@ -17,40 +21,9 @@
   <h3>Map with Sensors</h3>
   <div id="map"></div>
 
-  {% for sensor in sensors_list %}
-    <div>{{ sensor.name }}: lat= {{ sensor.address.latitude }}, lng= {{ sensor.address.longitude }}</div>
-  {% endfor %}
-
-  <script>
-      var default_center = {lat: 52.409538, lng: 16.931992};
-      var myOptions = {
-          zoom: 12,
-          center: default_center
-      };
-      map = new google.maps.Map(document.getElementById("map"), myOptions);
-      heatmap = new HeatmapOverlay(map,
-          {
-              "radius": 0.005,
-              "maxOpacity": 0.5,
-              "scaleRadius": true,
-              "useLocalExtrema": false,
-              latField: 'lat',
-              lngField: 'lng',
-              valueField: 'co_value'
-          }
-      );
-      var testData = {
-          max: 8,
-          min: 0,
-          data: [
-              {lat: 52.409538, lng: 16.931992, co_value: 8},
-              {lat: 52.419400, lng: 16.931992, co_value: 5},
-              {lat: 52.429400, lng: 16.931992, co_value: 4}
-
-          ]
-      };
-      heatmap.setData(testData);
-
-  </script>
+  <div>
+    <h3>Marker:</h3>
+    <h5 id="markerInfo"></h5>
+  </div>
 
 {% endblock %}
