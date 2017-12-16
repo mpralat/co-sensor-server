@@ -1,12 +1,19 @@
+import smtplib
+from datetime import datetime
+from decimal import *
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from rest_framework.renderers import JSONRenderer
+
+from co_sensor import settings
 from .models import Sensor, SensorData
 from .serializers import SensorDataSerializer
-from decimal import *
-from datetime import datetime
 
+CRITICAL_VALUE = 4.0
 
 class SensorConsumer(JsonWebsocketConsumer):
     channel_session = True
@@ -25,9 +32,13 @@ class SensorConsumer(JsonWebsocketConsumer):
         timestamp = content["timestamp"]
         timestamp = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f%z')
         value = Decimal(content["value"]).quantize(Decimal('.01'))
+
         print("[{timestamp}] {value}".format(timestamp=timestamp, value=value))
         serial_number = self.message.channel_session['serial_number']
         sensor = Sensor.objects.get(serial_number=serial_number)
+
+        if value > CRITICAL_VALUE:
+            send_mail(value=value, owner=sensor.owner)
 
         data = SensorData(timestamp=timestamp, value=value, sensor=sensor)
         try:
@@ -110,3 +121,20 @@ class ClientConsumer(JsonWebsocketConsumer):
             return False
         else:
             return True
+
+
+def create_the_mail(to):
+    msg = MIMEMultipart()
+    msg['From'] = 'No-Reply test_django@o2.pl'
+    msg['To'] = to
+    msg['Subject'] = 'simple email in python'
+    message = 'here is the email'
+    msg.attach(MIMEText(message))
+    return msg
+
+def send_mail(value, owner):
+    smtp = smtplib.SMTP(host=settings.EMAIL_HOST, port=settings.EMAIL_PORT)
+    smtp.ehlo()
+    smtp.login(user=settings.EMAIL_HOST_USER, password=settings.EMAIL_HOST_PASSWORD)
+    msg = create_the_mail(to='pralatmarta@gmail.com')
+    smtp.sendmail(from_addr=settings.EMAIL_HOST_USER, to_addrs='pralatmarta@gmail.com', msg=msg.as_string())
