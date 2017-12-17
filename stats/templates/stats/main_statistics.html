@@ -3,21 +3,38 @@
 {% load static widget_tweaks %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static "sensors/css/style.css" %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'stats/css/style.css' %}" />
     <script type="text/javascript">
-    averages = {{ averages }};
-    sensors_nums = {{ sensor_labels | safe }};
-    counts = {{ counts }};
+    var averages = {{ averages }};
+    var sensors_data = {{ sensors_data | safe }};
+    var sensors_nums = {{ sensors_labels | safe }};
+    var counts = {{ counts }};
+    var daytime_avgs = {{ daytime_avgs | safe }};
+    var daytime_counts = {{ daytime_counts | safe }};
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.js"></script>
     <script src="{%  static 'stats/js/avg_chart.js' %}"></script>
+    <script src="{%  static 'stats/js/week_avg_chart.js' %}"></script>
     <script src="{% static 'stats/js/stats.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-    <canvas id="chart" width="200" height="100"></canvas>
-    {% for sensor in sensor_labels %}
-        <div id={{ sensor }}></div>
-    {% endfor %}
+    <div id="wrapper">
+        <div id="avg_chart">
+            <canvas id="chart" width="200" height="100"></canvas>
+        </div>
+        <div id="sensors_indicators">
+        <div id="sensors_header">Your active sensors</div>
+            {% for sensor in sensors_labels %}
+                <div id={{ sensor }}></div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="wrapper">
+        <div id="avg_chart">
+            <canvas id="week_chart" width="200" height="100"></canvas>
+        </div>
+    </div>
+
 {% endblock %}

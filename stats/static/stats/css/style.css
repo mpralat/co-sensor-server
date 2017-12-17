@@ -1,15 +1,52 @@
 .dangerous {
-    color: #ff2f2f;
+    background: #ff2f2f;
 }
 
 .medium {
-    color: #ffa22f
+    background: #ffe12f;
 }
 
 .normal {
-    color: #ffe12f
+    background: #ccff66;
 }
 
 .healthy {
-    color: #2ae5c4
+    background: #4dff4d;
+}
+.box {
+    font-size: small;
+    font-weight: 100;
+    font-family: Raleway,HelveticaNeue,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #222;
+    height: 70px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 70px;
+    border: 1px solid white;
+}
+
+#wrapper {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+    display: inline-block;
+}
+
+#avg_chart {
+    width: 80%;
+    height:  100%;
+    float:left; /* add this */
+    position: relative;
+}
+
+
+#sensors_indicators {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+}
+
+.block-center {
+  padding: 0;
 }

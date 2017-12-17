@@ -1,12 +1,20 @@
+import email
+import os
+import smtplib
+from datetime import datetime
+from decimal import *
+
 from channels import Group
 from channels.generic.websockets import JsonWebsocketConsumer
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from rest_framework.renderers import JSONRenderer
+
+from co_sensor import settings
 from .models import Sensor, SensorData
 from .serializers import SensorDataSerializer
-from decimal import *
-from datetime import datetime
 
+CRITICAL_VALUE = 10.0
+TEMPLATE_PATH = os.path.join(settings.BASE_DIR, 'sensors/templates/original_msg.txt')
 
 class SensorConsumer(JsonWebsocketConsumer):
     channel_session = True
@@ -25,9 +33,13 @@ class SensorConsumer(JsonWebsocketConsumer):
         timestamp = content["timestamp"]
         timestamp = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f%z')
         value = Decimal(content["value"]).quantize(Decimal('.01'))
+
         print("[{timestamp}] {value}".format(timestamp=timestamp, value=value))
         serial_number = self.message.channel_session['serial_number']
         sensor = Sensor.objects.get(serial_number=serial_number)
+
+        if value > CRITICAL_VALUE:
+            send_mail(value=value, owner=sensor.owner, sensorname=sensor.name)
 
         data = SensorData(timestamp=timestamp, value=value, sensor=sensor)
         try:
@@ -110,3 +122,20 @@ class ClientConsumer(JsonWebsocketConsumer):
             return False
         else:
             return True
+
+
+def create_the_mail(to, username, sensorname, value):
+    with open(TEMPLATE_PATH, mode='r', encoding='utf-8') as file:
+        text = file.read()
+    final_text = text.format(sensor_name=sensorname, value=value, user=username)
+    msg = email.message_from_string(final_text)
+    msg.add_header('From', 'No-Reply test_django@o2.pl')
+    msg.add_header('To', to)
+    return msg
+
+def send_mail(value, owner, sensorname):
+    smtp = smtplib.SMTP(host='poczta.o2.pl', port=settings.EMAIL_PORT)
+    smtp.ehlo()
+    smtp.login(user='test_django@o2.pl', password='marta314')
+    msg = create_the_mail(to='pralatmarta@gmail.com', username=owner.username, sensorname=sensorname, value=value)
+    smtp.sendmail(from_addr='test_django@o2.pl', to_addrs='pralatmarta@gmail.com', msg=msg.as_bytes())
