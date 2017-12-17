@@ -13,7 +13,7 @@ from co_sensor import settings
 from .models import Sensor, SensorData
 from .serializers import SensorDataSerializer
 
-CRITICAL_VALUE = 4.0
+CRITICAL_VALUE = 10.0
 TEMPLATE_PATH = os.path.join(settings.BASE_DIR, 'sensors/templates/original_msg.txt')
 
 class SensorConsumer(JsonWebsocketConsumer):
