@@ -13,7 +13,7 @@ from co_sensor import settings
 from .models import Sensor, SensorData
 from .serializers import SensorDataSerializer
 
-CRITICAL_VALUE = 10.0
+CRITICAL_VALUE = 4.0
 TEMPLATE_PATH = os.path.join(settings.BASE_DIR, 'sensors/templates/original_msg.txt')
 
 class SensorConsumer(JsonWebsocketConsumer):
@@ -38,7 +38,7 @@ class SensorConsumer(JsonWebsocketConsumer):
         serial_number = self.message.channel_session['serial_number']
         sensor = Sensor.objects.get(serial_number=serial_number)
 
-        if value > CRITICAL_VALUE:
+        if value > CRITICAL_VALUE and sensor.owner.email:
             send_mail(value=value, owner=sensor.owner, sensorname=sensor.name)
 
         data = SensorData(timestamp=timestamp, value=value, sensor=sensor)
@@ -125,7 +125,7 @@ class ClientConsumer(JsonWebsocketConsumer):
 
 
 def create_the_mail(to, username, sensorname, value):
-    with open(TEMPLATE_PATH, mode='r', encoding='utf-8') as file:
+    with open(TEMPLATE_PATH) as file:
         text = file.read()
     final_text = text.format(sensor_name=sensorname, value=value, user=username)
     msg = email.message_from_string(final_text)
@@ -134,8 +134,9 @@ def create_the_mail(to, username, sensorname, value):
     return msg
 
 def send_mail(value, owner, sensorname):
-    smtp = smtplib.SMTP(host='poczta.o2.pl', port=settings.EMAIL_PORT)
+    print('Sending mail to...{}'.format(owner.email))
+    smtp = smtplib.SMTP(host=settings.TEST_MAIL_HOST, port=settings.EMAIL_PORT)
     smtp.ehlo()
-    smtp.login(user='test_django@o2.pl', password='marta314')
-    msg = create_the_mail(to='pralatmarta@gmail.com', username=owner.username, sensorname=sensorname, value=value)
-    smtp.sendmail(from_addr='test_django@o2.pl', to_addrs='pralatmarta@gmail.com', msg=msg.as_bytes())
+    smtp.login(user=settings.TEST_MAIL_USER, password=settings.TEST_MAIL_PASSWORD)
+    msg = create_the_mail(to=owner.email, username=owner.username, sensorname=sensorname, value=value)
+    smtp.sendmail(from_addr=settings.TEST_MAIL_USER, to_addrs=owner.email, msg=msg.as_string())

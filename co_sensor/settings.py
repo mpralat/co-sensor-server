@@ -163,3 +163,8 @@ CHANNEL_LAYERS = {
 }
 
 GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+
+
+TEST_MAIL_USER = 'test_django@o2.pl'
+TEST_MAIL_PASSWORD = os.environ.get('TEST_MAIL_PASSWORD')
+TEST_MAIL_HOST = 'poczta.o2.pl'
