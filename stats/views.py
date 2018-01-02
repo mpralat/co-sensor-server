@@ -42,7 +42,7 @@ def _count_average(data):
 def _prepare_week_stats(sensors_labels):
     week_sensors = SensorData.objects.filter(
         sensor__serial_number__in=sensors_labels,
-        timestamp__gte=datetime.datetime.today() - datetime.timedelta(days=7)
+        timestamp__gte=datetime.datetime.now() - datetime.timedelta(days=7)
     )
     morning = []
     midday = []
@@ -50,6 +50,7 @@ def _prepare_week_stats(sensors_labels):
     night = []
     for item in week_sensors:
         hour = item.timestamp.hour
+        print(hour)
         if  6 < hour <= 12:
             morning.append(item.value)
         elif 12 < hour <= 18:
@@ -60,6 +61,7 @@ def _prepare_week_stats(sensors_labels):
             night.append(item.value)
     avgs = [_count_average(morning), _count_average(midday), _count_average(evening), _count_average(night)]
     counts = [len(morning), len(midday), len(evening), len(night)]
+    print(avgs, counts)
     return {'daytime_avgs': avgs, 'daytime_counts': counts}
 
 
@@ -74,25 +76,7 @@ def show_week_stats(request):
     monthly_data = _prepare_month_stats(sensors_labels)
     result_dict.update(monthly_data)
     weekly_data = _prepare_week_stats(sensors_labels)
+    print(weekly_data)
     result_dict.update(weekly_data)
     return render(request, "stats/main_statistics.html", result_dict)
 
-
-def calculate_regression(sensors_labels):
-    predictions = {}
-    for sensor in sensors_labels:
-        sensor_data_filtered = SensorData.objects.filter(
-            sensor__serial_number=sensor,
-            timestamp__gte=datetime.datetime.today() - datetime.timedelta(days=7)
-        )
-
-        x_data = np.matrix([int(item.timestamp.strftime("%s")) * 1000 for item in sensor_data_filtered])
-        x_data = x_data.transpose()
-        y_data = [float(item.value) for item in sensor_data_filtered]
-
-        regr = linear_model.LinearRegression()
-        regr.fit(x_data, y_data)
-        tomorrow_date = datetime.datetime.now() + datetime.timedelta(days=1)
-        tomorrow = int(tomorrow_date.strftime("%s")) * 1000
-        predictions[sensor] = regr.predict(tomorrow)
-    return

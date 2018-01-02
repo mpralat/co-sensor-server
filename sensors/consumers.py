@@ -13,8 +13,7 @@ from co_sensor import settings
 from .models import Sensor, SensorData
 from .serializers import SensorDataSerializer
 
-CRITICAL_VALUE = 4.0
-TEMPLATE_PATH = os.path.join(settings.BASE_DIR, 'sensors/templates/original_msg.txt')
+
 
 class SensorConsumer(JsonWebsocketConsumer):
     channel_session = True
@@ -38,7 +37,7 @@ class SensorConsumer(JsonWebsocketConsumer):
         serial_number = self.message.channel_session['serial_number']
         sensor = Sensor.objects.get(serial_number=serial_number)
 
-        if value > CRITICAL_VALUE and sensor.owner.email:
+        if value > settings.CRITICAL_VALUE and sensor.owner.email:
             send_mail(value=value, owner=sensor.owner, sensorname=sensor.name)
 
         data = SensorData(timestamp=timestamp, value=value, sensor=sensor)
@@ -125,7 +124,7 @@ class ClientConsumer(JsonWebsocketConsumer):
 
 
 def create_the_mail(to, username, sensorname, value):
-    with open(TEMPLATE_PATH) as file:
+    with open(settings.TEMPLATE_PATH) as file:
         text = file.read()
     final_text = text.format(sensor_name=sensorname, value=value, user=username)
     msg = email.message_from_string(final_text)
