@@ -4,6 +4,11 @@ var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'
 var daytimes = ['Morning', 'Midday', 'Evening', 'Night'];
 var daytimes_colors = {"dangerous": "#ff2f2f", "medium": "#ffe12f","normal": "#ccff66", "healthy": "#4dff4d" };
 
+w_avg = averages;
+d_avg = daytime_avgs;
+w_counts = counts;
+d_counts = daytime_counts;
+
 function createAvgChart(colors, labels, data_to_insert, title, canvas) {
     var datasets = [{
         data: data_to_insert,
@@ -33,16 +38,21 @@ function createAvgChart(colors, labels, data_to_insert, title, canvas) {
 function addAvgValue(timestamp, value){
     weekday_index = getWeekDayNumber(timestamp);
     daytime_index = getDaytime(timestamp);
-    updateChart(avg_chart, weekday_index, value, averages, counts);
-    updateChart(week_avg_chart, daytime_index, value, daytime_avgs, daytime_counts);
+    // update avg chart
+    w_avg[weekday_index] = (w_avg[weekday_index] * w_counts[weekday_index] + value) / (w_counts[weekday_index] + 1);
+    w_counts[weekday_index] += 1;
+    avg_chart.data.datasets[0].data = w_avg;
+    avg_chart.update();
+    // update week chart
+    d_avg[daytime_index] = (d_avg[daytime_index] * d_counts[daytime_index] + value) / (d_counts[daytime_index] + 1);
+    d_counts[daytime_index] += 1;
+    week_avg_chart.data.datasets[0].data = d_avg;
+    week_avg_chart.update();
 }
 
 function updateChart(chart, index, value, avgs, counts) {
     console.log(avgs[index]);
-    counts[index] += 1;
-    avgs[index] = (avgs[index] * counts[index] + value) / counts[index];
-    chart.data.datasets[0].data = avgs;
-    chart.update();
+
 }
 
 // MONTH AVG
