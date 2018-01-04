@@ -5,13 +5,6 @@
 {% block header %}
   <link rel="stylesheet" href="{% static "sensors/css/style.css" %}">
   <link rel="stylesheet" href="{% static "css/map.css" %}">
-  <script>
-    var sensors_list = {{ sensors_list|safe }};
-  </script>
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ google_key }}"></script>
-  <script type="text/javascript" src="{% static 'js/heatmap.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/gmaps-heatmap.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/map.js' %}"></script>
 
   <meta name="viewport" content="initial-scale=1.0">
   <meta charset="utf-8">
@@ -26,4 +19,14 @@
     <h5 id="markerInfo"></h5>
   </div>
 
+{% endblock %}
+
+{% block script %}
+  <script>
+    var sensors_list = {{ sensors_list|safe }};
+  </script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ google_key }}"></script>
+  <script type="text/javascript" src="{% static 'js/heatmap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/gmaps-heatmap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/map.js' %}"></script>
 {% endblock %}
