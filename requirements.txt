@@ -23,3 +23,6 @@ django_extensions
 django_widget_tweaks
 djangorestframework
 googlemaps
+numpy
+sklearn
+scipy
