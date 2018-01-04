@@ -49,7 +49,7 @@ class Sensor(models.Model):
         null=True,
         blank=True
     )
-    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True, related_name="sensors")
+    address = models.ForeignKey(Address, null=True, blank=True, related_name="sensors")
 
     def save(self, *args, **kwargs):
         self.serial_number = self.serial_number.upper()
