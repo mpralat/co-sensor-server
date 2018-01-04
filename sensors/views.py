@@ -76,6 +76,6 @@ def sensor_delete(request, *args, **kwargs):
         if sensor is not None:
             sensor.owner = None
             sensor.name = None
-            Address.objects.get(id=sensor.address.id).delete()
             sensor.save()
+            sensor.address.delete()
         return redirect('sensors_list')
