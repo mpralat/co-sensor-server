@@ -134,8 +134,8 @@ def create_the_mail(to, username, sensorname, value):
 
 def send_mail(value, owner, sensorname):
     print('Sending mail to...{}'.format(owner.email))
-    smtp = smtplib.SMTP(host=settings.TEST_MAIL_HOST, port=settings.EMAIL_PORT)
+    smtp = smtplib.SMTP(host=settings.EMAIL_HOST, port=settings.EMAIL_PORT)
     smtp.ehlo()
-    smtp.login(user=settings.TEST_MAIL_USER, password=settings.TEST_MAIL_PASSWORD)
+    smtp.login(user=settings.EMAIL_HOST_USER, password=settings.EMAIL_HOST_PASSWORD)
     msg = create_the_mail(to=owner.email, username=owner.username, sensorname=sensorname, value=value)
-    smtp.sendmail(from_addr=settings.TEST_MAIL_USER, to_addrs=owner.email, msg=msg.as_string())
+    smtp.sendmail(from_addr=settings.EMAIL_HOST_USER, to_addrs=owner.email, msg=msg.as_string())
