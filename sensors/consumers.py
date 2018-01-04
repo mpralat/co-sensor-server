@@ -1,7 +1,7 @@
 import email
 import os
 import smtplib
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import *
 
 from channels import Group
@@ -37,7 +37,9 @@ class SensorConsumer(JsonWebsocketConsumer):
         serial_number = self.message.channel_session['serial_number']
         sensor = Sensor.objects.get(serial_number=serial_number)
 
-        if value > settings.CRITICAL_VALUE and sensor.owner.email:
+        sensors_data = SensorData.objects.filter(sensor=sensor, timestamp__gt=timestamp - timedelta(minutes=10))
+
+        if value > settings.CRITICAL_VALUE and sensor.owner.email and not sensors_data:
             send_mail(value=value, owner=sensor.owner, sensorname=sensor.name)
 
         data = SensorData(timestamp=timestamp, value=value, sensor=sensor)
