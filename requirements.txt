@@ -1,5 +1,5 @@
 dj-database-url
-Django
+Django=1.11
 gunicorn
 daphne
 psycopg2
